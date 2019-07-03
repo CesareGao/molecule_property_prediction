@@ -1,0 +1,16 @@
+2018-07-25 15:56:27 linux-virtual:amd64
+2018-07-25 15:56:27 linux-headers-virtual:amd64
+2018-07-25 15:56:27 linux-headers-generic:amd64
+2018-07-25 15:56:27 linux-headers-4.15.0-29-generic:amd64
+2018-07-25 15:56:27 linux-headers-4.15.0-29:all
+2018-07-25 15:56:28 linux-image-virtual:amd64
+2018-07-25 15:56:28 linux-image-4.15.0-29-generic:amd64
+2018-07-25 15:56:29 linux-modules-4.15.0-29-generic:amd64
+2018-07-25 15:56:33 grub-legacy-ec2:all
+2018-07-25 15:56:33 os-prober:amd64
+2018-07-25 15:56:33 grub-pc:amd64
+2018-07-25 15:56:34 grub-gfxpayload-lists:amd64
+2018-07-25 15:56:34 grub2-common:amd64
+2018-07-25 15:56:34 grub-pc-bin:amd64
+2018-07-25 15:56:34 grub-common:amd64
+2019-07-02 20:16:21 spark:amd64
