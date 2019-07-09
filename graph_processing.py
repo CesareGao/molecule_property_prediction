@@ -1,8 +1,4 @@
-# Pagerank using pregel and graphframes
-
-# This example is from:
-# useful for pregel:
-# https://graphframes.github.io/graphframes/docs/_site/api/python/graphframes.html
+# build graph with Pagerank algorithm by using pregel and graphframes
 
 #---------------------
 # These are the lines needed to get Python to work with Spark
@@ -22,19 +18,28 @@ from pyspark.sql import functions as F
 from graphframes import *    # for graphframes
 from graphframes.lib import Pregel
 
+# load the data
+import pandas as pd
+import numpy as np
+
+edges_array = pd.read_csv("../data/edges.csv").values
+nodes_array = pd.read_csv("../data/nodes.csv").values
+
+
 # note that 3 has no in-links
-edges = sqlCtx.createDataFrame([[0, 1], [1, 2], [2, 4], [2, 0], [3, 4], [4, 0],[4, 2]], ["src", "dst"])
+edges = sqlCtx.createDataFrame(edges_array, ["src", "dst","type","dist"])
 edges.cache()
 edges.show()
 
-vertices = sqlCtx.createDataFrame([[0], [1], [2], [3], [4]], ["id"])
+vertices = sqlCtx.createDataFrame(nodes_array, ["id","ele","rad","num"])
+vertices.cache()
 vertices.show()
 numVertices = vertices.count()
 
 # This is pagerrank so we need know the outdegree so just add it to the graph
-vertices = GraphFrame(vertices, edges).outDegrees
-vertices.cache()
-vertices.show()
+# vertices = GraphFrame(vertices, edges).outDegrees
+# vertices.cache()
+# vertices.show()
 
 graph = GraphFrame(vertices, edges)
 alpha = 0.15
@@ -43,7 +48,7 @@ alpha = 0.15
 
 # Initial value to give the rank col
 def initialValue():
-    return F.lit(1.0 / numVertices)
+    return F.lit(1.0 / numVertices) # should be changed to one column of nodes property.
 
 # How to update the rank col with the new message
 def updatedValue():
@@ -51,12 +56,12 @@ def updatedValue():
 
 # Sending messages along the edges in the direction of the edge
 def sendDst():
-    return Pregel.src("rank") / Pregel.src("outDegree")
+    return Pregel.src("rank") / Pregel.src("num")
 
 # Similar to sendDst but goes reverse along the edges
 # Not needed for pagerank
-#def sendSrc():
-#    return ???
+def sendSrc():
+   return Pregel.dst("rank") / Pregel.dst("num")
 
 # Called when we want to aggregrate the incoming messages
 def agg():
