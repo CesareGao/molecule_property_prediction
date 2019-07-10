@@ -2,8 +2,6 @@
 
 This is a Kaggle competetion [dataset](https://www.kaggle.com/c/champs-scalar-coupling) which still ongoing. 
 
-My target is to use the property of the molecule to predict the magnetic interaction(the scalar coupling constant) between two atoms in a molecule.
-
 ## Predictors
 
 This is a typical relational dataset. The train and test file contains the pairs relation of atoms in different molecules. The major information has:
@@ -15,6 +13,25 @@ This is a typical relational dataset. The train and test file contains the pairs
 - atom: the element of the atom
 
 These are basically all the information I have.
+
+## Motivation
+
+My target is to use the property of the molecule to predict the magnetic interaction(the scalar coupling constant) between two atoms in a molecule. This property is really hard to measure as the there is no clear way to just look at and calculate the coupling constant. It always be hard when it comes to large molucule with many atoms. So if I can predict it, according to the structure of molecule, it will be really helpful for give a first look at a new material.
+
+The predictors is quite domain related. So maybe we could use a small social network group(for example, FaceBook) to indicate the molecule.
+
+Molecule | FaceBook Group
+------------------ | ---------------------
+molecule name | unique group name
+atom index | each person's id in the group
+what kind of atom | the social title of each person
+hidden atom | who joined the group but with unpublic personal infos even could be a net police
+spatial position of each atom | the group title of each person
+coupling type | the social titles of each pair of group members and their relation(stranger, friends, enemy)
+distance between atoms | how close each pair of group members look like
+coupling constant(our target) | how truly close are the relations among each pair of group members
+
+I want to analyze the small graph problems, figure out a way to quantify the effect of a graph to each node and predict the relation among each nodes pair.
 
 ## Method
 
