@@ -21,17 +21,26 @@ from graphframes.lib import Pregel
 # load the data
 import pandas as pd
 import numpy as np
+import os
 
-edges_array = pd.read_csv("../data/edges.csv").values
-nodes_array = pd.read_csv("../data/nodes.csv").values
+edges = pd.read_csv(r"../data/edges.csv")[['molecule_name','atom_index_0','atom_index_1','type','distance']]
+edges["atom_index_0"] = edges['molecule_name'] +edges['atom_index_0'].astype(str)
+edges["atom_index_1"] = edges['molecule_name'] +edges['atom_index_1'].astype(str)
+edges.drop('molecule_name', axis=1, inplace=True)
+nodes = pd.read_csv("../data/nodes.csv")[['molecule_name','atom_index',"atom"]]
+nodes["atom_index"] = nodes['molecule_name'] +nodes['atom_index'].astype(str)
+nodes.drop('molecule_name', axis=1, inplace=True)
+edges = edges.values.tolist()
+nodes = nodes.values.tolist()
+
 
 
 # note that 3 has no in-links
-edges = sqlCtx.createDataFrame(edges_array, ["src", "dst","type","dist"])
+edges = sqlCtx.createDataFrame(edges, ["src", "dst","type","dist"])
 edges.cache()
 edges.show()
 
-vertices = sqlCtx.createDataFrame(nodes_array, ["id","ele","rad","num"])
+vertices = sqlCtx.createDataFrame(nodes, ["id","ele"])
 vertices.cache()
 vertices.show()
 numVertices = vertices.count()
@@ -56,23 +65,19 @@ def updatedValue():
 
 # Sending messages along the edges in the direction of the edge
 def sendDst():
-    return Pregel.src("rank") / Pregel.src("num")
+    return Pregel.src("rank") / Pregel.edge("dist")
 
 # Similar to sendDst but goes reverse along the edges
 # Not needed for pagerank
 def sendSrc():
-   return Pregel.dst("rank") / Pregel.dst("num")
+   return Pregel.dst("rank") / Pregel.edge("dist")
 
 # Called when we want to aggregrate the incoming messages
 def agg():
     return F.sum(Pregel.msg())
 
 # The pregel setup calling the above functions to do most of the work
-ranks = graph.pregel.setMaxIter(5).setCheckpointInterval(0).withVertexColumn("rank", initialValue(), updatedValue()).sendMsgToDst(sendDst()).aggMsgs(agg()).run()
-
-
-# This was the original example - all in one without functions
-#ranks = graph.pregel.setMaxIter(5).setCheckpointInterval(0).withVertexColumn("rank", F.lit(1.0 / numVertices), F.coalesce(Pregel.msg(), F.lit(0.0)) * F.lit(1.0 - alpha) + F.lit(alpha / numVertices)).sendMsgToDst(Pregel.src("rank") / Pregel.src("outDegree")).aggMsgs(F.sum(Pregel.msg())).run()
+ranks = graph.pregel.setMaxIter(2).setCheckpointInterval(0).withVertexColumn("rank", initialValue(), updatedValue()).sendMsgToDst(sendDst()).aggMsgs(agg()).run()
 
 ranks.show()
 
