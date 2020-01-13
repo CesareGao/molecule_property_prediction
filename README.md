@@ -1,6 +1,6 @@
 # Molecule Property Prediction
 
-This is a Kaggle competetion [dataset](https://www.kaggle.com/c/champs-scalar-coupling) which still ongoing. 
+This is a Kaggle competetion [dataset](https://www.kaggle.com/c/champs-scalar-coupling). 
 
 ## Predictors
 
@@ -56,3 +56,9 @@ Use these less-predictor data to predict the scalar coupling constant of atom pa
 - take the volume of the molecule into acount
 - Use k-means to set the initial contribution of coupling and modified this with a feedback
 - Set all the unknown atom with same initial value
+
+## Summary
+
+- Using Spark graphframe is not a good choice as the large size of data and the limited computing power. Neo4j is a better choice.
+- The local best neural network model is not as ideal as the first prize winner of this competetion, which means the graph model still has lots of space for improvement.
+- Unbalanced evaluation estimator is better for evaluation the model performance.
